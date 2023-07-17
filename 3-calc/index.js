@@ -13,7 +13,7 @@ const OPERATION = {
 const servedOperators = Object.values(OPERATION);
 
 function isServedOperator(operator) {
-  return servedOperators.some(item => operator);
+  return servedOperators.some(item => item === operator);
 }
 
 const a = +process.argv[2];

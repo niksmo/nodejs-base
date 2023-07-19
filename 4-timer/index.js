@@ -1,14 +1,13 @@
 import EventEmitter from 'node:events';
-import { START, END, ERROR } from './const.js';
+import { START, END, ERROR, ERR_MSG } from './const.js';
 import { getMilliseconds, parseEntry } from './utils.js';
-import { ParamsError } from './exceptions.js';
 
 const timerEmitter = new EventEmitter();
 
 timerEmitter.on(START, totalMs => {
   const endTime = new Date(Date.now() + totalMs);
 
-  console.log(`Таймер установлена на ${endTime}`);
+  console.log(`Таймер установлена на ${endTime.toLocaleString()}`);
 
   setTimeout(() => {
     timerEmitter.emit(END, '*** ВРЕМЯ ВЫШЛО! ***');
@@ -25,22 +24,31 @@ timerEmitter.on(ERROR, msg => {
 
 const args = process.argv.slice(2);
 
-(function setTimer() {
+function setTimer(args) {
   try {
-    const entries = args.map(parseEntry);
-
-    const set = new Set();
-    let totalMs = 0;
-
-    for (const [value, type] of entries) {
-      if (set.has(type)) {
-        throw new ParamsError();
-      }
-      totalMs += getMilliseconds(value, type);
+    if (args.length < 1) {
+      throw Error(ERR_MSG);
     }
 
+    const entries = args.map(parseEntry);
+
+    const set = new Set(); // for check unique types: 'h', 'm', 's'
+
+    const totalMs = entries.reduce((total, entry) => {
+      const [value, type] = entry;
+
+      if (set.has(type)) {
+        throw Error(ERR_MSG);
+      }
+
+      total += getMilliseconds(value, type);
+
+      return total;
+    }, 0);
+
     timerEmitter.emit(START, totalMs);
-  } catch (error) {
-    timerEmitter.emit(ERROR, error.message);
+  } catch (err) {
+    timerEmitter.emit(ERROR, err.message);
   }
-})();
+}
+setTimer(args);

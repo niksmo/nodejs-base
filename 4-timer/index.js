@@ -41,6 +41,8 @@ function setTimer(args) {
         throw Error(ERR_MSG);
       }
 
+      set.add(type);
+
       total += getMilliseconds(value, type);
 
       return total;

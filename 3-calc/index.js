@@ -4,23 +4,15 @@ import { subtruct } from './subtruct.js';
 import { split } from './split.js';
 
 const OPERATION = {
-  ADD: 'add',
-  MULTIPLY: 'multiply',
-  SUBCTRUCT: 'subtruct',
-  SPLIT: 'split',
+  add,
+  multiply,
+  subtruct,
+  split,
 };
 
-const servedOperators = Object.values(OPERATION);
+const [, , a, b, operator] = process.argv;
 
-function isServedOperator(operator) {
-  return servedOperators.some(item => item === operator);
-}
-
-const a = +process.argv[2];
-const b = +process.argv[3];
-const operator = process.argv[4]?.toLowerCase();
-
-(function calc() {
+function calc(a, b, operator) {
   if (!a || !b || !operator) {
     console.log(
       'Операторы или тип операции указаны неверно\nПример команды: node index.js 2 2 add'
@@ -28,30 +20,21 @@ const operator = process.argv[4]?.toLowerCase();
     return;
   }
 
-  if (!isServedOperator(operator)) {
-    console.log(
-      `Калькулятор поддерживает команды: ${servedOperators.join(', ')}`
+  a = Number(a);
+  b = Number(b);
+  operator = operator.toLowerCase();
+
+  try {
+    const result = OPERATION[operator](a, b);
+
+    console.log(`*** ${a} ${operator} ${b} = ${result} ***`);
+
+    return result;
+  } catch {
+    console.error(
+      `Калькулятор поддерживает команды: ${Object.keys(OPERATION).join(', ')}`
     );
-
-    return;
   }
+}
 
-  let result;
-
-  switch (operator) {
-    case OPERATION.ADD:
-      result = add(a, b);
-      break;
-    case OPERATION.MULTIPLY:
-      result = multiply(a, b);
-      break;
-    case OPERATION.SUBCTRUCT:
-      result = subtruct(a, b);
-      break;
-    case OPERATION.SPLIT:
-      result = split(a, b);
-      break;
-  }
-
-  console.log(`*** ${a} ${operator} ${b} = ${result} ***`);
-})();
+calc(a, b, operator);

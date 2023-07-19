@@ -4,7 +4,6 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "3-calc/index.js",
   "scripts": {},
   "repository": {
     "type": "git",

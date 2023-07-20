@@ -32,7 +32,7 @@ function setTimer(args) {
 
     const entries = args.map(parseEntry);
 
-    const set = new Set(); // for check unique types: 'h', 'm', 's'
+    const set = new Set(); // checking uniques input time types: 'h', 'm', 's'
 
     const totalMs = entries.reduce((total, [value, type]) => {
       if (set.has(type)) {

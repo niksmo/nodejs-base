@@ -1,9 +1,17 @@
 import fs from 'node:fs';
 import { Worker } from 'node:worker_threads';
 import { performance, PerformanceObserver } from 'node:perf_hooks';
+import { cpus } from 'node:os';
 import { getChunksPointers } from './utils.js';
 
-// init big array data from file, need exec before `node get-data.js`
+const KERNELS_COUNT = cpus.length;
+const MESSAGE = 'message';
+const ERROR = 'error';
+
+/*
+init big array data from file
+if file on exist, exec `node get-data.js`
+ */
 const arr = fs
   .readFileSync(new URL('./big-array.txt', import.meta.url), {
     encoding: 'utf8',
@@ -20,9 +28,6 @@ const perfObserver = new PerformanceObserver(items => {
 });
 
 perfObserver.observe({ entryTypes: ['function'] });
-
-// can be increased or decreased
-const KERNELS_COUNT = 6;
 
 /**
  *
@@ -50,8 +55,6 @@ function getTotalSync(arr) {
   return total;
 }
 
-performance.timerify(getTotalSync)(arr);
-
 /**
  *
  * @param {number[]} arr
@@ -64,11 +67,11 @@ async function getTotalInThreads(arr) {
         workerData: { arr, start, end },
       });
 
-      worker.on('message', value => {
+      worker.on(MESSAGE, value => {
         resolve(value);
       });
 
-      worker.on('error', err => {
+      worker.on(ERROR, err => {
         reject(err);
       });
     });
@@ -76,11 +79,7 @@ async function getTotalInThreads(arr) {
 
   const chunks = getChunksPointers(arr, KERNELS_COUNT);
 
-  const workers = [];
-
-  for (const [start, end] of chunks) {
-    workers.push(getTotal(arr, start, end));
-  }
+  const workers = chunks.map(([start, end]) => getTotal(arr, start, end));
 
   try {
     const results = await Promise.all(workers);
@@ -93,4 +92,5 @@ async function getTotalInThreads(arr) {
   }
 }
 
+performance.timerify(getTotalSync)(arr);
 performance.timerify(getTotalInThreads)(arr);

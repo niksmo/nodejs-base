@@ -1,13 +1,13 @@
 import EventEmitter from 'node:events';
 import { START, END, ERROR, ERR_MSG } from './const.js';
-import { getMilliseconds, parseEntry } from './utils.js';
+import { getMilliseconds, parseEntry, dateTimeFormatter } from './utils.js';
 
 const timerEmitter = new EventEmitter();
 
 timerEmitter.on(START, totalMs => {
   const endTime = new Date(Date.now() + totalMs);
 
-  console.log(`Таймер установлена на ${endTime.toLocaleString()}`);
+  console.log(`Таймер установлена на ${dateTimeFormatter.format(endTime)}`);
 
   setTimeout(() => {
     timerEmitter.emit(END, '*** ВРЕМЯ ВЫШЛО! ***');
@@ -34,18 +34,14 @@ function setTimer(args) {
 
     const set = new Set(); // for check unique types: 'h', 'm', 's'
 
-    const totalMs = entries.reduce((total, entry) => {
-      const [value, type] = entry;
-
+    const totalMs = entries.reduce((total, [value, type]) => {
       if (set.has(type)) {
         throw Error(ERR_MSG);
       }
 
       set.add(type);
 
-      total += getMilliseconds(value, type);
-
-      return total;
+      return total + getMilliseconds(value, type);
     }, 0);
 
     timerEmitter.emit(START, totalMs);

@@ -13,5 +13,8 @@
     "url": "https://github.com/niksmo/nodejs-base/issues"
   },
   "homepage": "https://github.com/niksmo/nodejs-base#readme",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "node-notifier": "^10.0.1"
+  }
 }

@@ -1,0 +1,20 @@
+{
+  "name": "weather-cli",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CLI for getting weather",
+  "main": "dist/app.js",
+  "bin": {
+    "weather": "node dist/app.js"
+  },
+  "type": "module",
+  "keywords": ["cli", "weather"],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "rm -rf dist & tsc",
+    "prestart": "npm run build",
+    "start": "node dist/app.js -s moscow -h -t 9999"
+  },
+  "author": "niksmo",
+  "license": "ISC"
+}

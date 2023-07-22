@@ -15,6 +15,7 @@
   "homepage": "https://github.com/niksmo/nodejs-base#readme",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^5.3.0",
     "node-notifier": "^10.0.1"
   },
   "devDependencies": {

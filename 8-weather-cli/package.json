@@ -11,9 +11,8 @@
   "keywords": ["cli", "weather"],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "rm -rf dist & tsc",
-    "prestart": "npm run build",
-    "start": "node dist/app.js -s moscow -h -t 9999"
+    "dev": "tsc --watch",
+    "build": "rm -rf ./dist & tsc --project ./tsconfig.json"
   },
   "author": "niksmo",
   "license": "ISC"

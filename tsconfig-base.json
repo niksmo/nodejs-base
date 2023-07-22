@@ -4,7 +4,6 @@
     "lib": ["ESNext"],
     "module": "ESNext",
     "moduleResolution": "NodeNext",
-    "alwaysStrict": true,
     "allowJs": false,
     "isolatedModules": true,
     "esModuleInterop": true,

@@ -1,8 +1,8 @@
 import { HELP, CITY, API_KEY } from '../const/args.js';
-import type { ArgsKeysType, ArgsValueType } from '../const/args.js';
+import type { TArgsKey, TArgsValue } from '../const/args.js';
 
 export function getArgs() {
-  const argsMap = new Map<ArgsKeysType, ArgsValueType>();
+  const argsMap = new Map<TArgsKey, TArgsValue>();
 
   const [exec, file, ...args] = process.argv;
 

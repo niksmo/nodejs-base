@@ -1,7 +1,25 @@
 import { getArgs } from './helpers/args.js';
-import { printError, printHelp, printSuccess } from './services/log.service.js';
-import { saveKeyValue } from './services/storage.service.js';
-import { HELP, CITY, API_KEY } from './const/args.js';
+import {
+  printError,
+  printHelp,
+  printSuccess,
+  printWeather,
+} from './services/log.service.js';
+import {
+  getCityValue,
+  getTokenValue,
+  saveKeyValue,
+} from './services/storage.service.js';
+import { HELP, CITY, API_KEY, TArgsValue } from './const/args.js';
+import { fetchForcast } from './services/api.service.js';
+
+function saveToken(tokenValue: TArgsValue) {
+  return saveKeyValue('token', tokenValue);
+}
+
+function saveCity(city: TArgsValue) {
+  return saveKeyValue('city', city);
+}
 
 async function initCLI() {
   try {
@@ -13,16 +31,23 @@ async function initCLI() {
     }
 
     if (args.has(API_KEY)) {
-      await saveKeyValue('token', args.get(API_KEY));
+      await saveToken(args.get(API_KEY));
       printSuccess('Token has been saved');
       return;
     }
 
     if (args.has(CITY)) {
-      // save city
+      await saveCity(args.get(CITY));
+      printSuccess('City has been saved');
+      return;
     }
 
-    // exec without params
+    const city = process.env.CITY || (await getCityValue());
+    const token = process.env.TOKEN || (await getTokenValue());
+
+    const weather = await fetchForcast(city, token);
+
+    printWeather(weather);
   } catch (error) {
     if (error instanceof Error) {
       printError(error.message);

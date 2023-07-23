@@ -12,7 +12,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "dev": "tsc --watch",
-    "build": "rm -rf ./dist & tsc --project ./tsconfig.json"
+    "build": "rm -rf ./dist && tsc --project ./tsconfig.json",
+    "start": "npm run build && node dist/app.js"
   },
   "author": "niksmo",
   "license": "ISC"

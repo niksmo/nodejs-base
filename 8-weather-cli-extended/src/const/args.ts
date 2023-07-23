@@ -1,7 +1,10 @@
-export const HELP = 'h';
-export const CITY = 's';
-export const API_KEY = 't';
+export const enum ArgKey {
+  HELP = 'h',
+  CITY_ADD = 's',
+  CITY_REM = 'r',
+  CITY_LIST = 'sl',
+  API_KEY = 't',
+  LANG = 'l',
+}
 
-export type TArgsKey = typeof HELP | typeof CITY | typeof API_KEY;
-
-export type TArgsValue = string | true | undefined;
+export type TLineArgValue = string | undefined;

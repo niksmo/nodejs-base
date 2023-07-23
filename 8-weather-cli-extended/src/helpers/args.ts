@@ -1,8 +1,7 @@
-import { HELP, CITY, API_KEY } from '../const/args.js';
-import type { TArgsKey, TArgsValue } from '../const/args.js';
+import { TLineArgValue, ArgKey } from '../const/args.js';
 
 export function getArgs() {
-  const argsMap = new Map<TArgsKey, TArgsValue>();
+  const argsMap = new Map<ArgKey, TLineArgValue>();
 
   const [exec, file, ...args] = process.argv;
 
@@ -10,11 +9,15 @@ export function getArgs() {
     if (argVal[0] === '-') {
       const inputParam = argVal[1];
 
-      if (inputParam === HELP) {
-        argsMap.set(inputParam, true);
+      if (inputParam === ArgKey.HELP) {
+        argsMap.set(inputParam, 'true');
       }
 
-      if (inputParam === CITY || inputParam === API_KEY) {
+      if (
+        inputParam === ArgKey.API_KEY ||
+        inputParam === ArgKey.CITY_ADD ||
+        inputParam === ArgKey.CITY_REM
+      ) {
         const nextArgV = args[idx + 1];
 
         argsMap.set(inputParam, nextArgV);

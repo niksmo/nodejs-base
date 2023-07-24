@@ -19,6 +19,10 @@ export function printError(err: string) {
   console.log(`${chalk.bgRed(' ERROR ')} ${err}`);
 }
 
+export function printInfo(msg: string) {
+  console.log(`${chalk.bgBlue(' INFO ')} ${msg}`);
+}
+
 export function printSuccess(msg: string) {
   console.log(`${chalk.bgGreen(' SUCCESS ')} ${msg}`);
 }

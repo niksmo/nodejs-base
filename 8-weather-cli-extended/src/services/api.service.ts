@@ -1,9 +1,5 @@
 import axios, { AxiosError } from 'axios';
-import {
-  CITY_UNMAINTAIN,
-  INVALID_API_KEY,
-  UNEXPECTED,
-} from '../const/error.js';
+import { selectFromState } from './storage.service.js';
 
 const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
@@ -19,21 +15,24 @@ export interface IResData {
   cod: number;
 }
 
-export async function fetchForcast(
-  city: string[],
-  token: string,
-  lang = 'ru',
-  units = 'metric'
-) {
+export async function fetchForcast() {
+  if (!selectFromState('token')) {
+    throw Error('Token doesn"t set');
+  }
+
+  if (selectFromState('cities').length === 0) {
+    throw Error('Cites doesn"t set');
+  }
+
   try {
-    const reqList = city.map(city =>
+    const reqList = selectFromState('cities').map(city =>
       axios
         .get<IResData>(API_URL, {
           params: {
             q: city,
-            appid: token,
-            lang,
-            units,
+            appid: selectFromState('token'),
+            lang: selectFromState('lang'),
+            units: 'metric',
           },
         })
         .then(({ data }) => data)
@@ -43,13 +42,41 @@ export async function fetchForcast(
   } catch (err) {
     if (err instanceof AxiosError) {
       if (err.response?.status === 401) {
-        throw Error(INVALID_API_KEY);
+        throw Error('INVALID_API_KEY');
       }
 
       if (err.response?.status === 404) {
-        throw Error(CITY_UNMAINTAIN);
+        throw Error('CITY_UNMAINTAIN');
       }
     }
-    throw Error(UNEXPECTED);
+    throw Error('Unexpected error');
+  }
+}
+
+export async function checkCity(cityName: string) {
+  if (!selectFromState('token')) {
+    throw Error('Token doesn"t set');
+  }
+
+  try {
+    await axios.get<IResData>(API_URL, {
+      params: {
+        q: cityName,
+        appid: selectFromState('token'),
+        lang: selectFromState('lang'),
+        units: 'metric',
+      },
+    });
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      if (err.response?.status === 401) {
+        throw Error('INVALID_API_KEY');
+      }
+
+      if (err.response?.status === 404) {
+        throw Error('CITY_UNMAINTAIN');
+      }
+    }
+    throw Error('UNEXPECTED');
   }
 }

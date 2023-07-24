@@ -1,31 +1,24 @@
-import { getArgs } from './helpers/args.js';
-import {
-  printError,
-  printHelp,
-  printSuccess,
-  printWeather,
-} from './services/log.service.js';
-import {
-  addCity,
-  findCity,
-  getCityList,
-  getTokenValue,
-  removeCity,
-  saveKeyValue,
-  setToken,
-} from './services/storage.service.js';
-import { ArgKey } from './const/args.js';
+import { ArgKey, getArgs } from './helpers/args.js';
+import { printError, printHelp, printWeather } from './services/log.service.js';
+import { initStateFromFile } from './services/storage.service.js';
 import { fetchForcast } from './services/api.service.js';
-import { CITY_IS_EXIST, CITY_MISS_ENTRY } from './const/error.js';
+import { getTokenValue, setToken } from './services/token.service.js';
+import {
+  appendCity,
+  getCityList,
+  removeCity,
+} from './services/city.service.js';
+import { setLanguage } from './services/lang.service.js';
 
 async function initCLI() {
   try {
     const args = getArgs();
 
-    const cityList = await getCityList();
-    const token = await getTokenValue();
+    await initStateFromFile();
 
     if (args.has(ArgKey.LANG)) {
+      await setLanguage(args.get(ArgKey.LANG));
+      return;
     }
 
     if (args.has(ArgKey.HELP)) {
@@ -33,49 +26,32 @@ async function initCLI() {
       return;
     }
 
-    if (args.has(ArgKey.API_KEY)) {
-      await saveKeyValue('token', args.get(ArgKey.API_KEY), setToken);
-      printSuccess('Token has been saved');
+    if (args.has(ArgKey.API_KEY_LIST)) {
+      getTokenValue();
+      return;
+    }
+
+    if (args.has(ArgKey.API_KEY_SET)) {
+      await setToken(args.get(ArgKey.API_KEY_SET));
       return;
     }
 
     if (args.has(ArgKey.CITY_ADD)) {
-      const newCity = args.get(ArgKey.CITY_ADD);
-
-      const isExist = await findCity(newCity);
-
-      if (isExist) {
-        throw Error(CITY_IS_EXIST);
-      }
-
-      if (newCity) {
-        await fetchForcast([newCity], token);
-      }
-
-      await saveKeyValue('city', args.get(ArgKey.CITY_ADD), addCity);
-      printSuccess('City has been saved');
+      await appendCity(args.get(ArgKey.CITY_ADD));
       return;
     }
 
     if (args.has(ArgKey.CITY_REM)) {
-      const city = args.get(ArgKey.CITY_REM);
-
-      const isExist = await findCity(city);
-
-      if (!isExist) {
-        throw Error(CITY_MISS_ENTRY);
-      }
-
-      await saveKeyValue('city', args.get(ArgKey.CITY_REM), removeCity);
-      printSuccess(`Remove city: ${city}`);
+      await removeCity(args.get(ArgKey.CITY_REM));
       return;
     }
 
     if (args.has(ArgKey.CITY_LIST)) {
-      // print city list
+      getCityList();
+      return;
     }
 
-    const weather = await fetchForcast(cityList, token);
+    const weather = await fetchForcast();
 
     printWeather(weather);
   } catch (error) {

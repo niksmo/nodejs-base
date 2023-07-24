@@ -1,5 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { selectFromState } from './storage.service.js';
+import { EXCEPTION } from '../i18n/exception.js';
 
 const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
@@ -17,11 +18,11 @@ export interface IResData {
 
 export async function fetchForcast() {
   if (!selectFromState('token')) {
-    throw Error('Token doesn"t set');
+    throw Error(EXCEPTION.TOKEN_NOT_SET);
   }
 
   if (selectFromState('cities').length === 0) {
-    throw Error('Cites doesn"t set');
+    throw Error(EXCEPTION.CITY_LIST_EMPTY);
   }
 
   try {
@@ -42,20 +43,20 @@ export async function fetchForcast() {
   } catch (err) {
     if (err instanceof AxiosError) {
       if (err.response?.status === 401) {
-        throw Error('INVALID_API_KEY');
+        throw Error(EXCEPTION.TOKEN_INVALID);
       }
 
       if (err.response?.status === 404) {
-        throw Error('CITY_UNMAINTAIN');
+        throw Error(EXCEPTION.CITY_UNMAINTAIN);
       }
     }
-    throw Error('Unexpected error');
+    throw Error(EXCEPTION.UNEXPECTED);
   }
 }
 
 export async function checkCity(cityName: string) {
   if (!selectFromState('token')) {
-    throw Error('Token doesn"t set');
+    throw Error(EXCEPTION.TOKEN_NOT_SET);
   }
 
   try {
@@ -70,13 +71,13 @@ export async function checkCity(cityName: string) {
   } catch (err) {
     if (err instanceof AxiosError) {
       if (err.response?.status === 401) {
-        throw Error('INVALID_API_KEY');
+        throw Error(EXCEPTION.TOKEN_INVALID);
       }
 
       if (err.response?.status === 404) {
-        throw Error('CITY_UNMAINTAIN');
+        throw Error(EXCEPTION.CITY_UNMAINTAIN);
       }
     }
-    throw Error('UNEXPECTED');
+    throw Error(EXCEPTION.UNEXPECTED);
   }
 }

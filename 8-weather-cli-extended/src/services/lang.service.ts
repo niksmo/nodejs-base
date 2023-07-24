@@ -1,21 +1,20 @@
+import { EXCEPTION } from '../i18n/exception.js';
+import { TLang } from '../i18n/index.js';
+import { INFO } from '../i18n/info.js';
+import { SUCCESS } from '../i18n/success.js';
 import { printInfo, printSuccess } from './log.service.js';
 import { saveStateToFile } from './storage.service.js';
 
-const EN = 'en';
-const RU = 'ru';
-
-export type TLang = typeof EN | typeof RU;
-
 export async function setLanguage(value: TLang | string | undefined) {
   if (!value) {
-    throw Error('Need lang param');
+    throw Error(EXCEPTION.LANG_PARAM_OMIT);
   }
 
-  if (value !== EN && value !== RU) {
-    printInfo('Maintain ru and en');
+  if (value !== TLang.en && value !== TLang.ru) {
+    printInfo(INFO.LANG_AVAILABLE);
     return;
   }
 
   await saveStateToFile('lang', value);
-  printSuccess('Lang set');
+  printSuccess(SUCCESS.LANG_SAVED + ' ' + value);
 }

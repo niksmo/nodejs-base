@@ -1,4 +1,7 @@
 import { CLargValue } from '../helpers/args.js';
+import { EXCEPTION } from '../i18n/exception.js';
+import { INFO } from '../i18n/info.js';
+import { SUCCESS } from '../i18n/success.js';
 import { checkCity } from './api.service.js';
 import { printInfo, printSuccess } from './log.service.js';
 import { selectFromState, saveStateToFile } from './storage.service.js';
@@ -13,15 +16,15 @@ export function getCityList() {
   const cities = selectFromState('cities');
 
   if (cities.length === 0) {
-    printInfo('Cities not set');
+    printInfo(INFO.CITY_LIST_EMPTY);
     return;
   }
-  printInfo(cities.join(', '));
+  printInfo(INFO.CITY_LIST_PRINT + ' ' + cities.join(', '));
 }
 
 export async function appendCity(value: CLargValue) {
   if (!value) {
-    throw Error('City name not set');
+    throw Error(EXCEPTION.CITY_PARAM_OMIT);
   }
 
   value = value.toLocaleLowerCase();
@@ -29,7 +32,7 @@ export async function appendCity(value: CLargValue) {
   const storedCity = findCity(value);
 
   if (storedCity) {
-    printInfo('City already set');
+    printInfo(INFO.CITY_ALREADY_EXIST);
     return;
   }
 
@@ -41,12 +44,12 @@ export async function appendCity(value: CLargValue) {
 
   await saveStateToFile('cities', updatedList);
 
-  printSuccess('append');
+  printSuccess(SUCCESS.CITY_SAVED + ' ' + value);
 }
 
 export async function removeCity(value: CLargValue) {
   if (!value) {
-    throw Error('City name not set');
+    throw Error(EXCEPTION.CITY_PARAM_OMIT);
   }
 
   value = value.toLocaleLowerCase();
@@ -54,7 +57,7 @@ export async function removeCity(value: CLargValue) {
   const storedCity = findCity(value);
 
   if (!storedCity) {
-    printInfo('City not exist in settings list');
+    printInfo(INFO.CITY_NOT_EXIST);
     return;
   }
 
@@ -64,5 +67,5 @@ export async function removeCity(value: CLargValue) {
 
   await saveStateToFile('cities', filteredLiset);
 
-  printSuccess('removed');
+  printSuccess(SUCCESS.CITY_REMOVED + ' ' + value);
 }

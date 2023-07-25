@@ -1,5 +1,7 @@
 import chalk from 'chalk';
 import { IResData } from './api.service.js';
+import { selectFromState } from './storage.service.js';
+import { getHelpText, getWeatherText } from '../i18n/index.js';
 
 const iconDict = {
   '01': '☀️',
@@ -28,29 +30,31 @@ export function printSuccess(msg: string) {
 }
 
 export function printHelp() {
+  const currentLang = selectFromState('lang');
+
   const helpText = `\
 ${chalk.bgCyan(' HELP ')}
-Без параметров - вывод погоды
--s [CITY] для установки города
--h для вывода помощи
--t [API_KEY] для сохранения токена`;
+${getHelpText(currentLang, 'HELP_COMMON')}`;
 
   console.log(helpText);
 }
 
-export function printWeather(res: IResData[]) {
-  res.forEach(data => {
+export function printWeather(cityList: IResData[]) {
+  const { WEATHER_IN_CITY, TEMP, FEELS_LIKE, HUMIDITY, WIND_SPEED, M_IN_S } =
+    getWeatherText(selectFromState('lang'));
+
+  cityList.forEach(data => {
     const iconCode = data.weather[0].icon.slice(0, -1) as TIconCode;
 
     const text = `\
 ${chalk.bgMagenta(' WEATHER ')}
-Погода в городе: ${data.name}
+${WEATHER_IN_CITY}: ${data.name}
 ${iconDict[iconCode]}  ${data.weather[0].description}
-Температура: ${Math.floor(data.main.temp)} (ощущается как: ${Math.floor(
+${TEMP}: ${Math.floor(data.main.temp)} (${FEELS_LIKE}: ${Math.floor(
       data.main.feels_like
     )})
-Влажность: ${data.main.humidity}%
-Скорость ветра: ${data.wind.speed} м/с`;
+${HUMIDITY}: ${data.main.humidity}%
+${WIND_SPEED}: ${data.wind.speed} ${M_IN_S}`;
 
     console.log(text);
   });

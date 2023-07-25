@@ -1,9 +1,6 @@
 import { TLang } from './index.js';
-import { selectFromState } from '../services/storage.service.js';
 
-const LANG = selectFromState('lang');
-
-type TInfo =
+export type TInfo =
   | 'TOKEN_PRINT'
   | 'TOKEN_NOT_SET'
   | 'CITY_ALREADY_EXIST'
@@ -18,7 +15,7 @@ type TInfoTree = {
   };
 };
 
-const InfoTree: TInfoTree = {
+export const INFO: TInfoTree = {
   en: {
     CITY_ALREADY_EXIST: 'The city is already on the list',
     CITY_LIST_PRINT: 'List of saved cities:',
@@ -27,8 +24,7 @@ const InfoTree: TInfoTree = {
     TOKEN_NOT_SET:
       'The token is not installed. Set the token with the command -t [APY_KEY]',
     TOKEN_PRINT: 'The token is installed:',
-    LANG_AVAILABLE:
-      'Supported languages: ["en", "ru"]. By default, "en" is set',
+    LANG_AVAILABLE: 'Supported languages: ["en", "ru"]. By default: "en"',
   },
   ru: {
     CITY_ALREADY_EXIST: 'Город уже в списке',
@@ -42,7 +38,3 @@ const InfoTree: TInfoTree = {
       'Поддерживаемые языки: ["en", "ru"]. По умолчанию установлен "en"',
   },
 };
-
-const INFO = InfoTree[LANG];
-
-export { INFO };

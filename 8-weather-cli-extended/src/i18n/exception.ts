@@ -1,9 +1,6 @@
 import { TLang } from './index.js';
-import { selectFromState } from '../services/storage.service.js';
 
-const LANG = selectFromState('lang');
-
-type TException =
+export type TException =
   | 'TOKEN_NOT_SET'
   | 'TOKEN_INVALID'
   | 'TOKEN_PARAM_OMIT'
@@ -13,13 +10,13 @@ type TException =
   | 'LANG_PARAM_OMIT'
   | 'UNEXPECTED';
 
-type TExceptionTree = {
+export type TExceptionTree = {
   [key in TLang]: {
     [key in TException]: string;
   };
 };
 
-const ExceptionTree: TExceptionTree = {
+export const EXCEPTION: TExceptionTree = {
   en: {
     TOKEN_NOT_SET:
       'The token is not installed. Set the token with the command -t [APY_KEY]',
@@ -53,7 +50,3 @@ const ExceptionTree: TExceptionTree = {
     UNEXPECTED: 'Непредвиденная ошибка.',
   },
 };
-
-const EXCEPTION = ExceptionTree[LANG];
-
-export { EXCEPTION };

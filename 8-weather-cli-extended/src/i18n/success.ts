@@ -1,9 +1,10 @@
 import { TLang } from './index.js';
-import { selectFromState } from '../services/storage.service.js';
 
-const LANG = selectFromState('lang');
-
-type TSuccess = 'TOKEN_SAVED' | 'CITY_SAVED' | 'CITY_REMOVED' | 'LANG_SAVED';
+export type TSuccess =
+  | 'TOKEN_SAVED'
+  | 'CITY_SAVED'
+  | 'CITY_REMOVED'
+  | 'LANG_SAVED';
 
 type TSuccessTree = {
   [key in TLang]: {
@@ -11,7 +12,7 @@ type TSuccessTree = {
   };
 };
 
-const SuccessTree: TSuccessTree = {
+export const SUCCESS: TSuccessTree = {
   en: {
     CITY_SAVED: 'Saved city:',
     CITY_REMOVED: 'Deleted city:',
@@ -25,7 +26,3 @@ const SuccessTree: TSuccessTree = {
     LANG_SAVED: 'Установлен язык:',
   },
 };
-
-const SUCCESS = SuccessTree[LANG];
-
-export { SUCCESS };

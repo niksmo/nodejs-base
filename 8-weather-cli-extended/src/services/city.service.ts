@@ -1,7 +1,9 @@
-import { CLargValue } from '../helpers/args.js';
-import { EXCEPTION } from '../i18n/exception.js';
-import { INFO } from '../i18n/info.js';
-import { SUCCESS } from '../i18n/success.js';
+import {
+  getExceptionText,
+  getInfoText,
+  getSuccessText,
+} from '../i18n/index.js';
+import type { CLargValue } from '../helpers/args.js';
 import { checkCity } from './api.service.js';
 import { printInfo, printSuccess } from './log.service.js';
 import { selectFromState, saveStateToFile } from './storage.service.js';
@@ -14,17 +16,22 @@ function findCity(cityName: CLargValue) {
 
 export function getCityList() {
   const cities = selectFromState('cities');
+  const currentLang = selectFromState('lang');
 
   if (cities.length === 0) {
-    printInfo(INFO.CITY_LIST_EMPTY);
+    printInfo(getInfoText(currentLang, 'CITY_LIST_EMPTY'));
     return;
   }
-  printInfo(INFO.CITY_LIST_PRINT + ' ' + cities.join(', '));
+  printInfo(
+    getInfoText(currentLang, 'CITY_LIST_PRINT') + ' ' + cities.join(', ')
+  );
 }
 
 export async function appendCity(value: CLargValue) {
+  const currentLang = selectFromState('lang');
+
   if (!value) {
-    throw Error(EXCEPTION.CITY_PARAM_OMIT);
+    throw Error(getExceptionText(currentLang, 'CITY_PARAM_OMIT'));
   }
 
   value = value.toLocaleLowerCase();
@@ -32,7 +39,7 @@ export async function appendCity(value: CLargValue) {
   const storedCity = findCity(value);
 
   if (storedCity) {
-    printInfo(INFO.CITY_ALREADY_EXIST);
+    printInfo(getInfoText(currentLang, 'CITY_ALREADY_EXIST'));
     return;
   }
 
@@ -44,12 +51,14 @@ export async function appendCity(value: CLargValue) {
 
   await saveStateToFile('cities', updatedList);
 
-  printSuccess(SUCCESS.CITY_SAVED + ' ' + value);
+  printSuccess(getSuccessText(currentLang, 'CITY_SAVED') + ' ' + value);
 }
 
 export async function removeCity(value: CLargValue) {
+  const currentLang = selectFromState('lang');
+
   if (!value) {
-    throw Error(EXCEPTION.CITY_PARAM_OMIT);
+    throw Error(getExceptionText(currentLang, 'CITY_PARAM_OMIT'));
   }
 
   value = value.toLocaleLowerCase();
@@ -57,7 +66,7 @@ export async function removeCity(value: CLargValue) {
   const storedCity = findCity(value);
 
   if (!storedCity) {
-    printInfo(INFO.CITY_NOT_EXIST);
+    printInfo(getInfoText(currentLang, 'CITY_NOT_EXIST'));
     return;
   }
 
@@ -67,5 +76,5 @@ export async function removeCity(value: CLargValue) {
 
   await saveStateToFile('cities', filteredLiset);
 
-  printSuccess(SUCCESS.CITY_REMOVED + ' ' + value);
+  printSuccess(getSuccessText(currentLang, 'CITY_REMOVED') + ' ' + value);
 }

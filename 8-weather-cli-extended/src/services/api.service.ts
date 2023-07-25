@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { selectFromState } from './storage.service.js';
-import { EXCEPTION } from '../i18n/exception.js';
+import { getExceptionText } from '../i18n/index.js';
 
 const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
@@ -17,12 +17,14 @@ export interface IResData {
 }
 
 export async function fetchForcast() {
+  const currentLang = selectFromState('lang');
+
   if (!selectFromState('token')) {
-    throw Error(EXCEPTION.TOKEN_NOT_SET);
+    throw Error(getExceptionText(currentLang, 'TOKEN_NOT_SET'));
   }
 
   if (selectFromState('cities').length === 0) {
-    throw Error(EXCEPTION.CITY_LIST_EMPTY);
+    throw Error(getExceptionText(currentLang, 'CITY_LIST_EMPTY'));
   }
 
   try {
@@ -43,20 +45,22 @@ export async function fetchForcast() {
   } catch (err) {
     if (err instanceof AxiosError) {
       if (err.response?.status === 401) {
-        throw Error(EXCEPTION.TOKEN_INVALID);
+        throw Error(getExceptionText(currentLang, 'TOKEN_INVALID'));
       }
 
       if (err.response?.status === 404) {
-        throw Error(EXCEPTION.CITY_UNMAINTAIN);
+        throw Error(getExceptionText(currentLang, 'CITY_UNMAINTAIN'));
       }
     }
-    throw Error(EXCEPTION.UNEXPECTED);
+    throw Error(getExceptionText(currentLang, 'UNEXPECTED'));
   }
 }
 
 export async function checkCity(cityName: string) {
+  const currentLang = selectFromState('lang');
+
   if (!selectFromState('token')) {
-    throw Error(EXCEPTION.TOKEN_NOT_SET);
+    throw Error(getExceptionText(currentLang, 'TOKEN_NOT_SET'));
   }
 
   try {
@@ -71,13 +75,13 @@ export async function checkCity(cityName: string) {
   } catch (err) {
     if (err instanceof AxiosError) {
       if (err.response?.status === 401) {
-        throw Error(EXCEPTION.TOKEN_INVALID);
+        throw Error(getExceptionText(currentLang, 'TOKEN_INVALID'));
       }
 
       if (err.response?.status === 404) {
-        throw Error(EXCEPTION.CITY_UNMAINTAIN);
+        throw Error(getExceptionText(currentLang, 'CITY_UNMAINTAIN'));
       }
     }
-    throw Error(EXCEPTION.UNEXPECTED);
+    throw Error(getExceptionText(currentLang, 'UNEXPECTED'));
   }
 }

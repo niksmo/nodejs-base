@@ -1,25 +1,31 @@
-import { EXCEPTION } from '../i18n/exception.js';
-import { INFO } from '../i18n/info.js';
-import { SUCCESS } from '../i18n/success.js';
+import {
+  getExceptionText,
+  getInfoText,
+  getSuccessText,
+} from '../i18n/index.js';
 import { printInfo, printSuccess } from './log.service.js';
 import { saveStateToFile, selectFromState } from './storage.service.js';
 
 export function getTokenValue() {
   const token = selectFromState('token');
+  const currentLang = selectFromState('lang');
+
   if (!token) {
-    printInfo(INFO.TOKEN_NOT_SET);
+    printInfo(getInfoText(currentLang, 'TOKEN_NOT_SET'));
     return;
   }
 
-  printInfo(INFO.TOKEN_PRINT + ' ' + token);
+  printInfo(getInfoText(currentLang, 'TOKEN_PRINT') + ' ' + token);
 }
 
 export async function setToken(value: string | undefined) {
+  const currentLang = selectFromState('lang');
+
   if (!value) {
-    throw Error(EXCEPTION.TOKEN_PARAM_OMIT);
+    throw Error(getExceptionText(currentLang, 'TOKEN_PARAM_OMIT'));
   }
 
   await saveStateToFile('token', value);
 
-  printSuccess(SUCCESS.TOKEN_SAVED + ' ' + value);
+  printSuccess(getSuccessText(currentLang, 'TOKEN_SAVED') + ' ' + value);
 }

@@ -1,12 +1,12 @@
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { promises } from 'node:fs';
-import { TLang } from '../i18n/index.js';
+import type { TLang } from '../i18n/index.js';
 
 type TConfigState = {
   token: string | null;
   cities: string[];
-  lang: keyof typeof TLang;
+  lang: TLang;
 };
 
 type TConfigKey = keyof TConfigState;
